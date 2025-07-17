@@ -26,8 +26,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.methods.matchPassword = function (enteredPass) {
-  return enteredPass === this.password;
+userSchema.methods.matchPassword = async function (enteredPass) {
+  return await bcrypt.compare(enteredPass, this.password);
 };
 
 const Users = mongoose.model("Users", userSchema);
