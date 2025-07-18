@@ -10,11 +10,11 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
   date: {
-    type: date,
+    type: Date,
     required: true,
   },
   time: {
-    type: string, //15:00
+    type: String, //15:00
     required: true,
   },
   capacity: {
@@ -23,6 +23,10 @@ const eventSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
+  },
+  image: {
+    type: String,
     required: true,
   },
   tags: [String],
