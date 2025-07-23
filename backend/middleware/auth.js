@@ -29,10 +29,11 @@ const isAuthorized = async (req, res, next) => {
     const user = await Users.findById(userData.userId, "name email role");
 
     if (!user) {
-      return res.status(404).json({
-        error: true,
-        message: "User not loggedIn",
-      });
+      // return res.status(404).json({
+      //   error: true,
+      //   message: "User not loggedIn",
+      // });
+      res.user = null;
     }
 
     req.user = user;

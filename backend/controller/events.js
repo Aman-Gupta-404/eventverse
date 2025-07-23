@@ -2,6 +2,7 @@ const { Types } = require("mongoose");
 const cloudinary = require("../helper/cloudinary");
 const booking = require("../model/booking");
 const Event = require("../model/events");
+const Bookings = require("../model/booking");
 
 const uploadToCloudinary = (fileBuffer) => {
   return new Promise((resolve, reject) => {
@@ -65,10 +66,11 @@ async function getAllEvents(req, res) {
     const { sort } = req.query;
 
     let sortCommand = {};
+
     if (sort === "newest") {
-      sortCommand = { createdAt: -1 };
+      sortCommand = { date: -1 };
     } else {
-      sortCommand = { createdAt: 1 };
+      sortCommand = { date: 1 };
     }
 
     const data = await Event.aggregate([
@@ -101,15 +103,33 @@ async function getSingleEvent(req, res) {
     // get event data
     const data = await Event.findById(id);
 
+    if (!data) {
+      return res.status(404).json({
+        error: true,
+        message: "Event not found!",
+      });
+    }
+
     // get if user has booking
-    const userBooking = await booking.findOne({
-      userId: Types.ObjectId(req.user._id),
-      eventId: Types.ObjectId(id),
+    let userBooking = false;
+    if (req.user) {
+      userBooking = await booking.findOne({
+        userId: new Types.ObjectId(req.user._id.toString()),
+        eventId: new Types.ObjectId(id),
+      });
+    }
+
+    const bookingCount = await Bookings.countDocuments({
+      eventId: new Types.ObjectId(id),
     });
 
     return res.status(200).json({
       error: false,
-      data: data,
+      data: {
+        event: data,
+        isUserBooked: userBooking ? true : false,
+        bookingCount: bookingCount,
+      },
     });
   } catch (error) {
     console.log({ error });

@@ -32,7 +32,7 @@ const bookTicket = async (req, res) => {
     const booking = new Bookings({ userId, eventId, qrCode: "" });
 
     // Save to get _id
-    await newBooking.save();
+    await booking.save();
 
     const qrPayload = JSON.stringify({
       bookingId: booking._id,
@@ -52,6 +52,7 @@ const bookTicket = async (req, res) => {
       message: "Booking Successful",
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: true, message: "Server Error" });
   }
 };

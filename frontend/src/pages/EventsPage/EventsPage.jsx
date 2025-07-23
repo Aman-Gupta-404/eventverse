@@ -4,6 +4,7 @@ import EventCard from "../../components/eventCard/EventCard";
 import FilterBar from "../../components/filterBar/FilterBar";
 import "./Events.css";
 import { getEvents } from "../../api/events";
+import { toast } from "react-toastify";
 
 function Events() {
   const [events, setEvents] = useState([]);
@@ -12,14 +13,16 @@ function Events() {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const result = await getEvents(sort);
-        console.log({ result });
         if (result.status === 200) {
           setEvents(result.data.data);
         }
       } catch (err) {
-        console.error("Error fetching events:", err);
+        toast.error("Error in fetching events");
+      } finally {
+        setLoading(false);
       }
     };
     fetchEvents();

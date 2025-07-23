@@ -10,7 +10,7 @@ export const getEvents = async (sortBy) => {
   return response;
 };
 
-export const getSingleEvent = async () => {
-  const response = await api.get(`/v1/events/single`);
+export const getSingleEvent = async (id) => {
+  const response = await api.get(`/v1/events/single?id=${id}`);
   return response;
 };

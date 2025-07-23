@@ -19,7 +19,7 @@ router.post("/add", isAuthorized, isAdmin, upload.single("image"), addEvent);
 // get all events
 router.get("/all", getAllEvents);
 
-router.get("/single", getSingleEvent);
+router.get("/single", isAuthorized, getSingleEvent);
 
 // router.post("/add", isAuthorized, isAdmin, upload.single("image"), addEvent);
 
