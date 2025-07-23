@@ -5,11 +5,13 @@ const eventsRouter = require("./routes/events");
 
 require("dotenv").config();
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 connectDb();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(
   cors({

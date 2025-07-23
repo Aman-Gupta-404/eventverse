@@ -1,4 +1,6 @@
+const { Types } = require("mongoose");
 const cloudinary = require("../helper/cloudinary");
+const booking = require("../model/booking");
 const Event = require("../model/events");
 
 const uploadToCloudinary = (fileBuffer) => {
@@ -57,6 +59,69 @@ async function addEvent(req, res) {
   // get all the data from req body
 }
 
+async function getAllEvents(req, res) {
+  try {
+    // get query parameters
+    const { sort } = req.query;
+
+    let sortCommand = {};
+    if (sort === "newest") {
+      sortCommand = { createdAt: -1 };
+    } else {
+      sortCommand = { createdAt: 1 };
+    }
+
+    const data = await Event.aggregate([
+      {
+        $match: {
+          date: { $gt: new Date() },
+        },
+      },
+      { $sort: sortCommand },
+    ]);
+
+    return res.status(200).json({
+      error: false,
+      data: data,
+    });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({
+      error: true,
+      message: "Server error",
+    });
+  }
+}
+
+async function getSingleEvent(req, res) {
+  try {
+    // get query parameters
+    const { id } = req.query;
+
+    // get event data
+    const data = await Event.findById(id);
+
+    // get if user has booking
+    const userBooking = await booking.findOne({
+      userId: Types.ObjectId(req.user._id),
+      eventId: Types.ObjectId(id),
+    });
+
+    return res.status(200).json({
+      error: false,
+      data: data,
+    });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({
+      error: true,
+      message: "Server error",
+    });
+  }
+}
+
 module.exports = {
   addEvent,
+  getAllEvents,
+  getSingleEvent,
 };

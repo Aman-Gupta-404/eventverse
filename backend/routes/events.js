@@ -1,10 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../middleware/multer");
-const { addEvent } = require("../controller/events");
+const {
+  addEvent,
+  getAllEvents,
+  getSingleEvent,
+} = require("../controller/events");
+const { isAuthorized, isAdmin } = require("../middleware/auth");
+
+// router.use((req, res, next) => {
+//   console.log("h1");
+//   next();
+// });
 
 // add event
-router.post("/add", upload.single("image"), addEvent);
+router.post("/add", isAuthorized, isAdmin, upload.single("image"), addEvent);
+
+// get all events
+router.get("/all", getAllEvents);
+
+router.get("/single", getSingleEvent);
+
+// router.post("/add", isAuthorized, isAdmin, upload.single("image"), addEvent);
 
 // update event
 

@@ -57,16 +57,17 @@ const loginUser = async (req, res) => {
 
     if (user) {
       // check for correct password
-      const isPasswordMatchd = user.matchPassword(password);
+      const isPasswordMatchd = await user.matchPassword(password);
 
       if (isPasswordMatchd) {
         //generate the token
         const token = generateToken(user._id.toString());
 
         // send the token in cookies
-        res.cookie("jwt_token", token, {
+        res.cookie("ev_jwt_token", token, {
           httpOnly: true,
-          // sameSite: "strict",
+          secure: false, // true for HTTPS (set to false for localhost)
+          sameSite: "lax", // allow cookies across origins for POST
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
 
